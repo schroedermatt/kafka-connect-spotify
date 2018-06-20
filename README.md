@@ -2,13 +2,38 @@
 
 Kafka Source Connector using Spotify as the data source.
 
-### config
+### Getting Started
+1. Clone and build project
+```
+git clone https://github.com/msschroe3/kafka-connect-spotify
+cd kafka-connect-spotify
+./gradlew clean shadowJar
+```
+2. Start docker environment by running
+```
+docker-compose up -d
+```
+3. Update `spotify-source.json` with Spotify access token
+4. POST configuration to connect worker to start connector
+```
+curl -X POST -H "Content-Type: application/json" --data @spotify-source.json 192.168.99.100:8083/connectors
+```
+5. Navigate to Confluent Control Center to verify connector was configured
 
-`spotify.oauth.accessToken`
-`spotify.kafka.topic`
+### Confluent Control Center
+The confluent control center is running. Navigate to `localhost:9021` to see the control center.
 
-### usage
-1. `git clone`
-2. `./gradlew clean build shadowJar`
-3. configure access token and topic
-4. laser beam to connector service
+### [Managing Running Connectors](https://docs.confluent.io/current/connect/managing.html#managing-running-connectors)
+
+### Reading Kafka Data
+1. Install KafkaCat
+```
+brew install kafkacat
+```
+
+### Connector Configuration
+See `spotify-source.json` for full configuration set.
+
+Spotify Config Values:
+- `spotify.oauth.accessToken`
+- `spotify.kafka.topic`

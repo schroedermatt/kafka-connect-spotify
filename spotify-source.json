@@ -1,0 +1,13 @@
+{
+  "name": "spotify_source",
+  "config": {
+    "connector.class": "SpotifySourceConnector",
+    "spotify.oauth.accessToken": "xxxx",
+    "spotify.kafka.topic": "spotify_source",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+    "key.converter.schemas.enable": false,
+    "tasks.max": 1
+  }
+}

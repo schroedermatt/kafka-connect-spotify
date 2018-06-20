@@ -5,8 +5,6 @@ import org.apache.kafka.connect.source.SourceRecord
 import org.apache.kafka.connect.source.SourceTask
 import org.slf4j.LoggerFactory
 
-
-
 class SpotifyTask : SourceTask() {
     private val log = LoggerFactory.getLogger(SpotifyTask::class.java)
 
