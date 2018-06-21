@@ -1,38 +1,29 @@
 buildscript {
-    ext.kotlin_version = "1.2.50"
-
-    repositories {
-        jcenter()
-    }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
     }
 }
 
 plugins {
-    id "java"
-    id "com.palantir.git-version" version "0.5.2"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id 'idea'
+    id 'com.palantir.git-version' version '0.5.2'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
-allprojects  {
-    apply plugin: "idea"
-
-    group = "com.mschroeder.kafka.connect.spotify"
-    description = "kafka-connect-spotify"
-    version = versionDetails().lastTag.replaceAll(/^v/,"")
+// configuration for all projects
+allprojects {
+    group = 'com.mschroeder.kafka.connect.spotify'
+    version = versionDetails().lastTag.replaceAll(/^v/,'')
 
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
-    // configure kotlin for all projects
-    apply plugin: "kotlin"
+    apply plugin: 'kotlin'
     compileKotlin {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = '1.8'
             javaParameters = true
         }
     }
@@ -44,23 +35,17 @@ allprojects  {
 // shadow plugin: http://imperceptiblethoughts.com/shadow
 shadowJar {
     dependencies {
-        // provided in the kafka connect classpath, so exclude
-        exclude dependency("org.apache.kafka:connect-api:0.10.1.0")
-        exclude dependency("org.apache.kafka:kafka-clients:0.10.1.0")
-        exclude dependency("net.jpountz.lz4:.*:.*")
-        exclude dependency("org.xerial.snappy:.*:.*")
-        exclude dependency("org.slf4j:.*:.*")
+        // exclude dependencies provided in the kafka connect classpath
+        exclude dependency("org.apache.kafka:connect-api:$kafka_version")
+        exclude dependency("org.apache.kafka:kafka-clients:$kafka_version")
+        exclude dependency('net.jpountz.lz4:.*:.*')
+        exclude dependency('org.xerial.snappy:.*:.*')
+        exclude dependency('org.slf4j:.*:.*')
     }
-
-    // for things we directly depend on, repackage so we don"t conflict with other connectors
-    relocate "com.fasterxml", "com.spredfast.shade.fasterxml"
-    relocate "org.apache.commons", "com.spredfast.shade.apache.commons"
-    relocate "org.apache.http", "com.spredfast.shade.apache.http"
-    relocate "org.joda", "com.spredfast.shade.joda"
-    relocate "se.michaelthelin.spotify", "spotify-web-api-java"
 }
 
-// pull in sub-projects
+// pull in sub-project dependencies
 dependencies {
-    compile project(":source")
+    compile project(':source')
+    // compile project(':sink')
 }
