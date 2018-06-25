@@ -57,10 +57,13 @@ services:
       - schema-registry
     ports:
       - "8083:8083"
+      - "5005:5005"
     volumes:
       - mi2:/usr/share/java/monitoring-interceptors/
       - ./build/libs:/usr/share/java/kafka-connect-spotify
     environment:
+      KAFKA_DEBUG: y
+      DEBUG_SUSPEND_FLAG: y
       CONNECT_BOOTSTRAP_SERVERS: 'broker:9092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
@@ -84,6 +87,7 @@ services:
       CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
       CONNECT_PLUGIN_PATH: /usr/share/java
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+
 
   control-center:
     #image: confluentinc/cp-enterprise-control-center:5.0.0-beta30
@@ -131,13 +135,13 @@ services:
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
 
-  ksql-cli:
-    image: confluentinc/cp-ksql-cli:5.0.0-beta30
-    container_name: ksql-cli
-    depends_on:
-      - broker
-      - connect
-      - ksql-server
+#  ksql-cli:
+#    image: confluentinc/cp-ksql-cli:5.0.0-beta30
+#    container_name: ksql-cli
+#    depends_on:
+#      - broker
+#      - connect
+#      - ksql-server
 
 #  ksql-datagen:
 #    image: confluentinc/ksql-examples:5.0.0-beta30

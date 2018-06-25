@@ -21,20 +21,13 @@ class SpotifySourceConnector : SourceConnector() {
         log.info("stopping SpotifySourceConnector")
     }
 
-    override fun version(): String {
-        return Config.VERSION
-    }
+    override fun version(): String = Config.VERSION
 
-    override fun taskClass(): Class<out Task>? {
-        return SpotifyTask::class.java
-    }
+    override fun taskClass(): Class<out Task>? = SpotifyTask::class.java
 
-    override fun taskConfigs(maxTasks: Int): MutableList<MutableMap<String, String>> {
-        // can return config for up to maxTasks, but only returning config for 1 task
-        return mutableListOf(sourceConfig.originalsStrings())
-    }
+    // can return config for up to maxTasks, but only returning config for 1 task
+    override fun taskConfigs(maxTasks: Int): MutableList<MutableMap<String, String>> =
+            mutableListOf(sourceConfig.originalsStrings())
 
-    override fun config(): ConfigDef {
-        return Config.spotify
-    }
+    override fun config(): ConfigDef = Config.spotify
 }

@@ -29,22 +29,31 @@ class SpotifyTask : SourceTask() {
         log.info("stopping SpotifyTask")
     }
 
-    override fun version(): String {
-        return Config.VERSION
-    }
+    override fun version(): String = Config.VERSION
 
     override fun poll(): MutableList<SourceRecord> {
         log.info("** polling **")
 
-        val records = mutableListOf<SourceRecord>()
-
-        // todo
-        val data = client.fetchMockData()
+        // todo: send offset to getRecentlyPlayed (it currently always loads the same set of songs)
+        val playHistory = client.getRecentlyPlayed()
         val sourcePartition = mutableMapOf("user" to client.oauthToken)
-        val sourceOffset = mutableMapOf("position" to "1")
         val schema = Schema.STRING_SCHEMA
 
-        records += SourceRecord(sourcePartition, sourceOffset, topic, schema, data)
+        // todo: convert to stream/map
+        // generate SourceRecord for each PlayHistory item
+        val records = mutableListOf<SourceRecord>()
+        playHistory.forEach {
+            val sourceOffset = mutableMapOf("position" to it.playedAt)
+            records += SourceRecord(
+                    sourcePartition,
+                    sourceOffset,
+                    topic,
+                    schema,
+                    it.track.id,
+                    schema,
+                    it.track.name
+            )
+        }
 
         return records
     }
