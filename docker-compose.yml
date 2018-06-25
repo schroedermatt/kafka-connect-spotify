@@ -63,7 +63,7 @@ services:
       - ./build/libs:/usr/share/java/kafka-connect-spotify
     environment:
       KAFKA_DEBUG: y
-      DEBUG_SUSPEND_FLAG: y
+      DEBUG_SUSPEND_FLAG: n
       CONNECT_BOOTSTRAP_SERVERS: 'broker:9092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
