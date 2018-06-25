@@ -6,6 +6,7 @@ import com.wrapper.spotify.exceptions.detailed.BadRequestException
 import com.wrapper.spotify.model_objects.specification.PlayHistory
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.util.*
 
 class SpotifyClient(val oauthToken: String) {
     private val log = LoggerFactory.getLogger(SpotifyClient::class.java)
@@ -14,18 +15,21 @@ class SpotifyClient(val oauthToken: String) {
             .setAccessToken(oauthToken)
             .build()
 
-    fun getRecentlyPlayed(): MutableList<PlayHistory> {
-        log.info("Retrieving recently played items.")
+    fun getRecentlyPlayed(after: Date, limit: Int = 50): MutableList<PlayHistory> {
+        log.info("Retrieving play history after ${after.time}")
 
         var items = mutableListOf<PlayHistory>()
 
         try {
             val response = api
-                .currentUsersRecentlyPlayedTracks
-                .build()
-                .execute()
+                    .currentUsersRecentlyPlayedTracks
+                    // the built in after() method does not convert date to timestamp
+                    .setQueryParameter("after", after.time)
+                    .limit(limit)
+                    .build()
+                    .execute()
 
-            log.info("Request complete: ${response.total} total items")
+            log.info("Request complete: ${response.items.size} items retrieved")
 
             items = response.items.toMutableList()
         } catch (e: BadRequestException) {

@@ -31,3 +31,16 @@ See `spotify-source.json` for full configuration set.
 Spotify Config Values:
 - `spotify.oauth.accessToken`
 - `spotify.kafka.topic`
+
+### Update Configuration
+```
+curl -X PUT -H "Content-Type: application/json" --data @spotify-source.json localhost:8083/connectors
+```
+
+### Reading from a Topic
+To see if messages are flying around, exec into the broker container and use the built in `kafka-console-consumer` CLI.
+
+```
+> docker exec -it ${broker-container-id} bash
+> kafka-console-consumer --bootstrap-server localhost:9092 --topic spotify_tracks --from-beginning
+```
