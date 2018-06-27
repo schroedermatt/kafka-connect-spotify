@@ -1,5 +1,9 @@
 package com.mschroeder.kafka.connect.spotify
 
+import com.mschroeder.kafka.connect.spotify.config.Config
+import com.mschroeder.kafka.connect.spotify.config.SpotifySourceConfig
+import com.mschroeder.kafka.connect.spotify.schema.PlayHistory
+import com.mschroeder.kafka.connect.spotify.schema.createStruct
 import org.apache.kafka.connect.data.Schema
 import org.apache.kafka.connect.source.SourceRecord
 import org.apache.kafka.connect.source.SourceTask
@@ -14,14 +18,16 @@ class SpotifyTask : SourceTask() {
     private lateinit var taskConfig: SpotifySourceConfig
     private lateinit var client: SpotifyClient
     private lateinit var topic: String
+    private lateinit var pollingInterval: Number
     private lateinit var offset: Date
 
     override fun start(config: MutableMap<String, String>?) {
         log.info("starting SpotifyTask v${version()}")
 
-        // initialize config
+        // initialize task config
         taskConfig = SpotifySourceConfig(Config.spotify, config)
         topic = taskConfig.getString(Config.SPOTIFY_KAFKA_TOPIC_CONF)
+        pollingInterval = taskConfig.getInt(Config.SPOTIFY_POLLING_INTERVAL_CONF)
 
         // start loading data from 6 months ago
         val cal = Calendar.getInstance()
@@ -30,7 +36,11 @@ class SpotifyTask : SourceTask() {
 
         // setup client for Spotify
         val oauthToken = taskConfig.getPassword(Config.SPOTIFY_OAUTH_ACCESS_TOKEN_CONF).value()
-        client = SpotifyClient(oauthToken)
+        val clientId = taskConfig.getPassword(Config.SPOTIFY_OAUTH_CLIENT_ID_CONF).value()
+        val clientSecret = taskConfig.getPassword(Config.SPOTIFY_OAUTH_CLIENT_SECRET_CONF).value()
+        client = SpotifyClient(oauthToken, clientId, clientSecret)
+
+        log.info("SpotifyTask is configured")
     }
 
     override fun stop() {
@@ -43,10 +53,6 @@ class SpotifyTask : SourceTask() {
         log.info("** polling **")
 
         val playHistory = client.getRecentlyPlayed(offset)
-        val sourcePartition = mutableMapOf("user" to client.oauthToken)
-
-        // todo: configure spotify PlayHistory schema
-        val schema = Schema.STRING_SCHEMA
 
         val records = playHistory
                 // update offset to most recently played track
@@ -54,13 +60,15 @@ class SpotifyTask : SourceTask() {
                 // convert each item to a SourceRecord
                 .map {
                     SourceRecord(
-                            sourcePartition,
-                            mutableMapOf("position" to it.playedAt.time),
+                            mutableMapOf("user_id" to client.currentUserId),
+                            mutableMapOf("played_at" to it.playedAt.time),
                             topic,
-                            schema,
+                            // message key
+                            Schema.STRING_SCHEMA,
                             it.track.id,
-                            schema,
-                            "${it.track.artists.first().name}: ${it.track.name}"
+                            // message value
+                            PlayHistory.SCHEMA,
+                            it.createStruct()
                     )
                 }
 

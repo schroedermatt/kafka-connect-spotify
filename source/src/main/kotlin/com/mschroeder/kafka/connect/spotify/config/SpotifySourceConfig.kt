@@ -1,4 +1,4 @@
-package com.mschroeder.kafka.connect.spotify
+package com.mschroeder.kafka.connect.spotify.config
 
 import org.apache.kafka.common.config.AbstractConfig
 import org.apache.kafka.common.config.ConfigDef

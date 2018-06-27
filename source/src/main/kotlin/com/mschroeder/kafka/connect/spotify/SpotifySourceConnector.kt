@@ -1,5 +1,7 @@
 package com.mschroeder.kafka.connect.spotify
 
+import com.mschroeder.kafka.connect.spotify.config.Config
+import com.mschroeder.kafka.connect.spotify.config.SpotifySourceConfig
 import org.apache.kafka.common.config.ConfigDef
 import org.apache.kafka.connect.connector.Task
 import org.apache.kafka.connect.source.SourceConnector

@@ -8,19 +8,38 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.*
 
-class SpotifyClient(val oauthToken: String) {
+class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret: String = "") {
     private val log = LoggerFactory.getLogger(SpotifyClient::class.java)
+    private val api: SpotifyApi
 
-    private var api: SpotifyApi = SpotifyApi.Builder()
-            .setAccessToken(oauthToken)
-            .build()
+    // todo: load user id in init()
+    val currentUserId = 123
+
+    init {
+        val builder = SpotifyApi.Builder()
+
+        if (clientId.isNotEmpty() && clientSecret.isNotEmpty()) {
+            builder
+                    .setClientId(clientId)
+                    .setClientSecret(clientSecret)
+        } else if (oauthToken.isNotEmpty()) {
+            builder
+                    .setAccessToken(oauthToken)
+        } else {
+            throw RuntimeException("Spotify credentials are required to run but none were provided.")
+        }
+
+        this.api = builder.build()
+    }
 
     fun getRecentlyPlayed(after: Date, limit: Int = 50): MutableList<PlayHistory> {
         log.info("Retrieving play history after ${after.time}")
 
         var items = mutableListOf<PlayHistory>()
-
         try {
+            // todo: implement refresh logic using client id and secret
+            // https://github.com/thelinmichael/spotify-web-api-java/blob/master/examples/authorization/client_credentials/ClientCredentialsExample.java
+
             val response = api
                     .currentUsersRecentlyPlayedTracks
                     // the built in after() method does not convert date to timestamp
