@@ -18,18 +18,21 @@ class Config {
                         .define(
                                 SPOTIFY_OAUTH_ACCESS_TOKEN_CONF,
                                 ConfigDef.Type.PASSWORD,
+                                "",
                                 ConfigDef.Importance.MEDIUM,
                                 "Access token for Spotify API (not needed if using client id & secret)."
                         )
                         .define(
                                 SPOTIFY_OAUTH_CLIENT_ID_CONF,
                                 ConfigDef.Type.PASSWORD,
+                                "",
                                 ConfigDef.Importance.HIGH,
                                 "Client ID for Spotify API."
                         )
                         .define(
                                 SPOTIFY_OAUTH_CLIENT_SECRET_CONF,
                                 ConfigDef.Type.PASSWORD,
+                                "",
                                 ConfigDef.Importance.HIGH,
                                 "Client Secret for Spotify API."
                         )
