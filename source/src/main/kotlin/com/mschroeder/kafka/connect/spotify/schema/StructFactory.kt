@@ -13,9 +13,9 @@ import com.wrapper.spotify.model_objects.specification.TrackSimplified as TrackM
 
 fun PlayHistoryModel.createStruct() : Struct {
     return Struct(PlayHistory.SCHEMA)
-            .put(PlayHistory.PLAYED_AT_FIELD, this.playedAt.time)
+            .put(PlayHistory.PLAYED_AT_FIELD, this.playedAt)
             .put(PlayHistory.TRACK_FIELD, this.track.createStruct())
-            .put(PlayHistory.CONTEXT_FIELD, this.context.createStruct())
+            .put(PlayHistory.CONTEXT_FIELD, this.context?.createStruct())
 }
 
 fun TrackModel.createStruct() : Struct {
@@ -26,6 +26,8 @@ fun TrackModel.createStruct() : Struct {
             .put(BaseSchema.TYPE_FIELD, this.type.type)
             .put(BaseSchema.URI_FIELD, this.uri)
             .put(Track.ARTISTS_FIELD, this.artists.first().createStruct())
+            // todo - support array of Artists
+            //.put(Track.ARTISTS_FIELD, this.artists.map { ArtistModel::createStruct }.toMutableList())
             .put(Track.DURATION_MS_FIELD, this.durationMs)
             .put(Track.EXPLICIT_FIELD, this.isExplicit)
             .put(Track.IS_PLAYABLE_FIELD, this.isPlayable)

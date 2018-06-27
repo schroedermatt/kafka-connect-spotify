@@ -3,6 +3,7 @@ package com.mschroeder.kafka.connect.spotify
 import com.wrapper.spotify.SpotifyApi
 import com.wrapper.spotify.exceptions.SpotifyWebApiException
 import com.wrapper.spotify.exceptions.detailed.BadRequestException
+import com.wrapper.spotify.exceptions.detailed.UnauthorizedException
 import com.wrapper.spotify.model_objects.specification.PlayHistory
 import org.slf4j.LoggerFactory
 import java.io.IOException
@@ -42,7 +43,7 @@ class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret
 
             val response = api
                     .currentUsersRecentlyPlayedTracks
-                    // the built in after() method does not convert date to timestamp
+                    // the built in after() builder method does not convert date to timestamp
                     .setQueryParameter("after", after.time)
                     .limit(limit)
                     .build()
@@ -51,6 +52,10 @@ class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret
             log.info("Request complete: ${response.items.size} items retrieved")
 
             items = response.items.toMutableList()
+        } catch (e: UnauthorizedException) {
+            log.error("Unauthorized - unable to call Spotify: ", e)
+
+            log.info("todo - refresh token!")
         } catch (e: BadRequestException) {
             log.error("Bad Request - unable to call Spotify: ", e)
         } catch (e: SpotifyWebApiException) {

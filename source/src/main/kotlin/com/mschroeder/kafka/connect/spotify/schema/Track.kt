@@ -21,18 +21,19 @@ class Track : BaseSchema() {
                 return SchemaBuilder.struct()
                         .name(LOGICAL_NAME)
                         .version(VERSION)
-                        .field(ID_FIELD,  Schema.INT32_SCHEMA)
+                        .field(ID_FIELD,  Schema.STRING_SCHEMA)
                         .field(HREF_FIELD, Schema.STRING_SCHEMA)
                         .field(URI_FIELD, Schema.STRING_SCHEMA)
                         .field(NAME_FIELD, Schema.STRING_SCHEMA)
                         .field(TYPE_FIELD, Schema.STRING_SCHEMA)
-                        .field(DURATION_MS_FIELD, Schema.INT32_SCHEMA)
-                        .field(EXPLICIT_FIELD, Schema.BOOLEAN_SCHEMA)
-                        .field(IS_PLAYABLE_FIELD, Schema.BOOLEAN_SCHEMA)
-                        .field(PREVIEW_URL_FIELD, Schema.STRING_SCHEMA)
-                        .field(TRACK_NUM_FIELD, Schema.INT16_SCHEMA)
-                        // todo: support List of artists
+                        .field(DURATION_MS_FIELD, Schema.OPTIONAL_INT32_SCHEMA)
+                        .field(EXPLICIT_FIELD, Schema.OPTIONAL_BOOLEAN_SCHEMA)
+                        .field(IS_PLAYABLE_FIELD, Schema.OPTIONAL_BOOLEAN_SCHEMA)
+                        .field(PREVIEW_URL_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
+                        .field(TRACK_NUM_FIELD, Schema.OPTIONAL_INT32_SCHEMA)
                         .field(ARTISTS_FIELD, Artist.SCHEMA)
+                        // todo - support array of Artist.SCHEMA
+                        //  .field(ARTISTS_FIELD, SchemaBuilder.array(Artist.SCHEMA).build())
                         .build()
             }
     }

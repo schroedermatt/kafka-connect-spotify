@@ -14,7 +14,7 @@ class Artist : BaseSchema() {
                 return SchemaBuilder.struct()
                         .name(LOGICAL_NAME)
                         .version(VERSION)
-                        .field(ID_FIELD,  Schema.INT32_SCHEMA)
+                        .field(ID_FIELD,  Schema.STRING_SCHEMA)
                         .field(HREF_FIELD, Schema.STRING_SCHEMA)
                         .field(URI_FIELD, Schema.STRING_SCHEMA)
                         .field(NAME_FIELD, Schema.STRING_SCHEMA)

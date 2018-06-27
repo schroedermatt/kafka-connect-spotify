@@ -17,6 +17,7 @@ class Context : BaseSchema() {
                         .field(HREF_FIELD, Schema.STRING_SCHEMA)
                         .field(URI_FIELD, Schema.STRING_SCHEMA)
                         .field(TYPE_FIELD, Schema.STRING_SCHEMA)
+                        .optional()
                         .build()
             }
     }
