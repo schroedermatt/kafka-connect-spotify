@@ -4,17 +4,25 @@ import com.wrapper.spotify.SpotifyApi
 import com.wrapper.spotify.exceptions.SpotifyWebApiException
 import com.wrapper.spotify.exceptions.detailed.BadRequestException
 import com.wrapper.spotify.exceptions.detailed.UnauthorizedException
+import com.wrapper.spotify.model_objects.specification.PagingCursorbased
+import com.wrapper.spotify.model_objects.specification.PagingCursorbased.Builder
 import com.wrapper.spotify.model_objects.specification.PlayHistory
 import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.util.*
 
-class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret: String = "") {
+class SpotifyClient(oauthToken: String, clientId: String, clientSecret: String) {
     private val log = LoggerFactory.getLogger(SpotifyClient::class.java)
     private val api: SpotifyApi
 
     // todo: load user id in init()
-    val currentUserId = 123
+    val currentUser = "123"
+
+    companion object {
+        private val EMPTY_RESPONSE = Builder<PlayHistory>()
+                .setTotal(0)
+                .setItems(arrayOf())
+                .build()
+    }
 
     init {
         val builder = SpotifyApi.Builder()
@@ -33,29 +41,27 @@ class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret
         this.api = builder.build()
     }
 
-    fun getRecentlyPlayed(after: Date, limit: Int = 50): MutableList<PlayHistory> {
-        log.info("Retrieving play history after ${after.time}")
+    fun getRecentlyPlayedTracks(after: Number, limit: Int = 50): PagingCursorbased<PlayHistory> {
+        log.info("Retrieving play history after $after")
 
-        var items = mutableListOf<PlayHistory>()
+        var response = EMPTY_RESPONSE
+
         try {
-            // todo: implement refresh logic using client id and secret
-            // https://github.com/thelinmichael/spotify-web-api-java/blob/master/examples/authorization/client_credentials/ClientCredentialsExample.java
-
-            val response = api
+            response = api
                     .currentUsersRecentlyPlayedTracks
-                    // the built in after() builder method does not convert date to timestamp
-                    .setQueryParameter("after", after.time)
+                    .setQueryParameter("after", after)
                     .limit(limit)
                     .build()
                     .execute()
 
             log.info("Request complete: ${response.items.size} items retrieved")
 
-            items = response.items.toMutableList()
         } catch (e: UnauthorizedException) {
             log.error("Unauthorized - unable to call Spotify: ", e)
 
             log.info("todo - refresh token!")
+            // todo: implement refresh logic using client id and secret
+            // https://github.com/thelinmichael/spotify-web-api-java/blob/master/examples/authorization/client_credentials/ClientCredentialsExample.java
         } catch (e: BadRequestException) {
             log.error("Bad Request - unable to call Spotify: ", e)
         } catch (e: SpotifyWebApiException) {
@@ -64,6 +70,6 @@ class SpotifyClient(oauthToken: String = "", clientId: String = "", clientSecret
             log.error("IO Exception - unable to call Spotify: ", e)
         }
 
-        return items
+        return response
     }
 }
