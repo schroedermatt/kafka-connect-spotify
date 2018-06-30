@@ -135,6 +135,37 @@ services:
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
 
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:latest
+    depends_on:
+      - zookeeper
+      - broker
+      - schema-registry
+    ports:
+      - 8082:8082
+    hostname: rest-proxy
+    container_name: rest-proxy
+    environment:
+      KAFKA_REST_HOST_NAME: rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:9092'
+      KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
+      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+
+  # Landoop Topics UI: https://github.com/Landoop/kafka-topics-ui
+  topics-ui:
+    image: landoop/kafka-topics-ui
+    hostname: topics-ui
+    container_name: topics-ui
+    depends_on:
+      - rest-proxy
+    ports:
+       - "8000:8000"
+    environment:
+      KAFKA_REST_PROXY_URL: "http://rest-proxy:8082"
+      PROXY: "true"
+
+# Other Pieces of the Confluent Stack
+
 #  ksql-cli:
 #    image: confluentinc/cp-ksql-cli:5.0.0-beta30
 #    container_name: ksql-cli
@@ -167,22 +198,6 @@ services:
 #      STREAMS_BOOTSTRAP_SERVERS: broker:9092
 #      STREAMS_SCHEMA_REGISTRY_HOST: schema-registry
 #      STREAMS_SCHEMA_REGISTRY_PORT: 8081
-
-#  rest-proxy:
-#    image: confluentinc/cp-kafka-rest:latest
-#    depends_on:
-#      - zookeeper
-#      - broker
-#      - schema-registry
-#    ports:
-#      - 8082:8082
-#    hostname: rest-proxy
-#    container_name: rest-proxy
-#    environment:
-#      KAFKA_REST_HOST_NAME: rest-proxy
-#      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:9092'
-#      KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
-#      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
 volumes:
     mi2: {}
