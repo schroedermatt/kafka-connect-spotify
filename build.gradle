@@ -34,7 +34,8 @@ allprojects {
 }
 
 // shadow plugin: http://imperceptiblethoughts.com/shadow
-shadowJar {
+shadowJar() {
+    dependsOn clean
     dependencies {
         // exclude dependencies provided in the kafka connect classpath
         exclude dependency("org.apache.kafka:connect-api:$kafka_version")
