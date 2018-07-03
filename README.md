@@ -29,11 +29,12 @@ instructions on attaching to the remote process and the [Debugging](#debugging) 
     - If `DEBUG_SUSPEND_FLAG` is set to `y` in the `docker-compose` file, the connect service's startup will pause until 
     a remote debugger is connected. 
 
-### Confluent Control Center
-The confluent control center is running. Navigate to `localhost:9021` to see the control center.
+### Viewing Connectors & Topics
 
-### [Managing Running Connectors](https://docs.confluent.io/current/connect/managing.html#managing-running-connectors)
-This link has examples of performing various actions on Connectors (i.e. restart, pause, delete, etc)
+- Confluent Control Center (running at `localhost:9021`)
+- Kafka Topics UI (running at `localhost:8000`)
+
+_If you don't care about these, feel free to comment them out of the `docker-compose` file to save memory usage._
 
 ### Connector Configuration
 See `spotify-source.json` for full configuration set.
@@ -69,8 +70,59 @@ To see if messages are flying around, exec into the broker container and use the
 
 ```
 > docker exec -it ${broker-container-id} bash
-> kafka-console-consumer --bootstrap-server localhost:9092 --topic spotify_source --from-beginning
+> kafka-console-consumer --bootstrap-server localhost:9092 --topic spotify_play_history --from-beginning
 ```
+
+_You can also view the Kafka Topics UI on port `8000`_
+
+
+### Managing Connectors
+
+The REST endpoints available via the connect service can help manage the setup, updating and teardown of connectors 
+and their tasks. Replace `spotify-play-history` with the 'name' value from your config JSON file.
+
+#### Configure Connector
+
+```bash
+curl -X POST -H "Content-Type: application/json" --data @spotify-source.json localhost:8083/connectors
+```
+
+#### Get Active Connectors
+```bash
+curl localhost:8083/connectors
+```
+
+#### Get Active Tasks for a Connector
+```bash
+curl localhost:8083/connectors/spotify-play-history/tasks | jq
+```
+
+#### Get Connector Status
+```bash
+curl localhost:8083/connectors/spotify-play-history/status | jq
+```
+
+#### Get Connector Configuration
+```bash
+curl localhost:8083/connectors/spotify-play-history | jq
+```
+
+#### Pause Connector
+```bash
+curl -X PUT localhost:8083/connectors/spotify-play-history/pause
+```
+
+#### Resume Connector
+```bash
+curl -X PUT localhost:8083/connectors/spotify-play-history/resume
+```
+
+#### Delete Connector
+```bash
+curl -X DELETE localhost:8083/connectors/spotify-play-history
+```
+
+#### [More Details](https://docs.confluent.io/current/connect/managing.html)
 
 ### Debugging
 The connect service's docker-compose setup has a few properties than enable remote debugging of the connector.
