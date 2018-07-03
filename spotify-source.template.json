@@ -1,10 +1,11 @@
 {
-  "name": "spotify_source",
+  "name": "spotify-play-history",
   "config": {
-    "spotify.oauth.accessToken": "xxx",
+    "spotify.username": "xxxx",
+    "spotify.oauth.accessToken": "xxxx",
     "spotify.oauth.clientId": "xxxx",
     "spotify.oauth.clientSecret": "xxxx",
-    "spotify.kafka.topic": "spotify_source",
+    "spotify.kafka.topic": "spotify-tracks",
 
     "connector.class": "SpotifySourceConnector",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",

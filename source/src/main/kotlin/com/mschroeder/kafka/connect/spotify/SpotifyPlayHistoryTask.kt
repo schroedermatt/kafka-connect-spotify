@@ -1,5 +1,6 @@
 package com.mschroeder.kafka.connect.spotify
 
+import com.mschroeder.kafka.connect.spotify.client.SpotifyClient
 import com.mschroeder.kafka.connect.spotify.config.Config
 import com.mschroeder.kafka.connect.spotify.config.SpotifySourceConfig
 import com.mschroeder.kafka.connect.spotify.schema.PlayHistory
@@ -13,8 +14,11 @@ import org.slf4j.LoggerFactory
 import java.util.*
 import com.wrapper.spotify.model_objects.specification.PlayHistory as PlayHistoryModel
 
-class SpotifyTask : SourceTask() {
-    private val log = LoggerFactory.getLogger(SpotifyTask::class.java)
+/**
+ * This Source Task polls against Spotify's recently played API for a user.
+ */
+class SpotifyPlayHistoryTask : SourceTask() {
+    private val log = LoggerFactory.getLogger(SpotifyPlayHistoryTask::class.java)
 
     // lateinit due to not having config until start()
     private lateinit var taskConfig: SpotifySourceConfig
@@ -25,24 +29,26 @@ class SpotifyTask : SourceTask() {
     private lateinit var offset: Number
 
     companion object {
-        private const val PARTITION_ID: String = "user_id"
+        private const val PARTITION_ID: String = "username"
         private const val OFFSET_ID: String = "played_at"
     }
 
     override fun start(config: MutableMap<String, String>?) {
-        log.info("Starting SpotifyTask v${version()}")
+        log.info("Starting SpotifyPlayHistoryTask v${version()}")
 
         configureTask(config)
     }
 
     override fun stop() {
-        log.info("Stopping SpotifyTask")
+        log.info("Stopping SpotifyPlayHistoryTask")
     }
 
     override fun version(): String = Config.VERSION
 
     override fun poll(): MutableList<SourceRecord> {
-        log.info("** POLLING **")
+        log.info("** polling in $pollingInterval seconds **")
+
+        Thread.sleep(1000 * pollingInterval.toLong())
 
         val playHistoryPage = client.getRecentlyPlayedTracks(offset)
 
@@ -103,7 +109,7 @@ class SpotifyTask : SourceTask() {
      **************/
 
     private fun configureTask(config: MutableMap<String, String>?) {
-        log.info("Configuring SpotifyTask and SpotifyClient")
+        log.info("Configuring SpotifyPlayHistoryTask and SpotifyClient")
 
         // initialize task config
         taskConfig = SpotifySourceConfig(Config.spotify, config)
@@ -112,14 +118,13 @@ class SpotifyTask : SourceTask() {
 
         client = createSpotifyClient()
 
-        partition = mutableMapOf(PARTITION_ID to client.currentUser)
+        val partitionId = taskConfig.getString(Config.SPOTIFY_USERNAME_CONF)
+        partition = mutableMapOf(PARTITION_ID to partitionId)
         offset = loadOffset(this.context, timestamp(6))
 
-        log.info("-- Message Topic: $topic")
-        log.info("-- Task Polling Interval: $pollingInterval")
-        log.info("-- Task Partition: User ${client.currentUser}")
-        log.info("-- Task Offset: $offset")
-        log.info("SpotifyTask is configured and ready to rock")
+        log.info("Task Partition: User $partitionId")
+        log.info("Task Offset: $offset")
+        log.info("SpotifyPlayHistoryTask is configured and ready to rock")
     }
 
     /**
@@ -134,7 +139,7 @@ class SpotifyTask : SourceTask() {
     }
 
     /**
-     * Loads the starting offset for the SpotifyTask.
+     * Loads the starting offset for the SpotifyPlayHistoryTask.
      *
      * If an offset exists (i.e. the task has been previously run) then the task will pick up
      * from that offset. If it doesn't exist (i.e. this is the task's initial run) then it will

@@ -12,6 +12,8 @@ plugins {
 }
 
 // configuration for all projects
+
+// shadow plugin: http://imperceptiblethoughts.com/shadow
 allprojects {
     group = 'com.mschroeder.kafka.connect.spotify'
     version = versionDetails().lastTag.replaceAll(/^v/,'')
@@ -24,16 +26,23 @@ allprojects {
     apply plugin: 'kotlin'
     compileKotlin {
         kotlinOptions {
+            // set to 1.8 since default is 1.6
             jvmTarget = '1.8'
             javaParameters = true
         }
     }
+
+//    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+//        kotlinOptions {
+//            // set to 1.8 since default is 1.6
+//            jvmTarget = "1.8"
+//        }
+//    }
+
     dependencies {
         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     }
 }
-
-// shadow plugin: http://imperceptiblethoughts.com/shadow
 shadowJar() {
     dependsOn clean
     dependencies {

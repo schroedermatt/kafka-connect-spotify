@@ -6,6 +6,7 @@ class Config {
     companion object {
         const val VERSION = "0.0.1"
 
+        const val SPOTIFY_USERNAME_CONF = "spotify.username"
         const val SPOTIFY_OAUTH_ACCESS_TOKEN_CONF = "spotify.oauth.accessToken"
         const val SPOTIFY_OAUTH_CLIENT_ID_CONF = "spotify.oauth.clientId"
         const val SPOTIFY_OAUTH_CLIENT_SECRET_CONF = "spotify.oauth.clientSecret"
@@ -15,6 +16,13 @@ class Config {
         val spotify: ConfigDef
             get() {
                 return ConfigDef()
+                        .define(
+                                SPOTIFY_USERNAME_CONF,
+                                ConfigDef.Type.STRING,
+                                "anonymous",
+                                ConfigDef.Importance.HIGH,
+                                "Spotify username. Used as partition key of Kafka topic."
+                        )
                         .define(
                                 SPOTIFY_OAUTH_ACCESS_TOKEN_CONF,
                                 ConfigDef.Type.PASSWORD,
@@ -46,10 +54,9 @@ class Config {
                         .define(
                                 SPOTIFY_POLLING_INTERVAL_CONF,
                                 ConfigDef.Type.INT,
-                                30000,
+                                30,
                                 ConfigDef.Importance.LOW,
-                                "Polling interval (milliseconds) for loading Spotify data."
-
+                                "Polling interval (seconds) for loading Spotify data."
                         )
             }
     }

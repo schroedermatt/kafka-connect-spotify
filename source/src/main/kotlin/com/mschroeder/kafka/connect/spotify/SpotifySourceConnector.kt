@@ -25,7 +25,7 @@ class SpotifySourceConnector : SourceConnector() {
 
     override fun version(): String = Config.VERSION
 
-    override fun taskClass(): Class<out Task>? = SpotifyTask::class.java
+    override fun taskClass(): Class<out Task>? = SpotifyPlayHistoryTask::class.java
 
     // can return config for up to maxTasks, but only returning config for 1 task
     override fun taskConfigs(maxTasks: Int): MutableList<MutableMap<String, String>> =
