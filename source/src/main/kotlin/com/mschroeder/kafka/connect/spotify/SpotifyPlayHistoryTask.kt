@@ -1,12 +1,13 @@
 package com.mschroeder.kafka.connect.spotify
 
-import com.mschroeder.kafka.connect.spotify.client.SpotifyClient
+import com.mschroeder.kafka.common.schema.PlayHistory
+import com.mschroeder.kafka.common.schema.PlayHistoryKey
+import com.mschroeder.kafka.common.schema.StructFactory
+import com.mschroeder.kafka.common.schema.toStruct
+import com.mschroeder.kafka.common.spotify.SpotifyClient
 import com.mschroeder.kafka.connect.spotify.config.Config
 import com.mschroeder.kafka.connect.spotify.config.SpotifySourceConfig
-import com.mschroeder.kafka.connect.spotify.schema.PlayHistory
-import com.mschroeder.kafka.connect.spotify.schema.toStruct
 import com.wrapper.spotify.model_objects.specification.PagingCursorbased
-import org.apache.kafka.connect.data.Schema
 import org.apache.kafka.connect.source.SourceRecord
 import org.apache.kafka.connect.source.SourceTask
 import org.apache.kafka.connect.source.SourceTaskContext
@@ -26,6 +27,7 @@ class SpotifyPlayHistoryTask : SourceTask() {
     private lateinit var topic: String
     private lateinit var pollingInterval: Number
     private lateinit var partition:  MutableMap<String, String>
+    private lateinit var username: String
     private lateinit var offset: Number
 
     companion object {
@@ -65,8 +67,8 @@ class SpotifyPlayHistoryTask : SourceTask() {
                             mutableMapOf(OFFSET_ID to it.playedAt.time),
                             topic,
                             // message key
-                            Schema.STRING_SCHEMA,
-                            it.track.id,
+                            PlayHistoryKey.SCHEMA,
+                            StructFactory.createPlayHistoryKey(username, it.track.id),
                             // message value
                             PlayHistory.SCHEMA,
                             it.toStruct()
@@ -118,11 +120,11 @@ class SpotifyPlayHistoryTask : SourceTask() {
 
         client = createSpotifyClient()
 
-        val partitionId = taskConfig.getString(Config.SPOTIFY_USERNAME_CONF)
-        partition = mutableMapOf(PARTITION_ID to partitionId)
+        username = taskConfig.getString(Config.SPOTIFY_USERNAME_CONF)
+        partition = mutableMapOf(PARTITION_ID to username)
         offset = loadOffset(this.context, timestamp(6))
 
-        log.info("Task Partition: User $partitionId")
+        log.info("Task Partition: User $username")
         log.info("Task Offset: $offset")
         log.info("SpotifyPlayHistoryTask is configured and ready to rock")
     }

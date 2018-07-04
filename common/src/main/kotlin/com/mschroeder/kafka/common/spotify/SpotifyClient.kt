@@ -1,4 +1,4 @@
-package com.mschroeder.kafka.connect.spotify.client
+package com.mschroeder.kafka.common.spotify
 
 import com.wrapper.spotify.SpotifyApi
 import com.wrapper.spotify.exceptions.detailed.UnauthorizedException
@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-
 
 class SpotifyClient(oauthToken: String, clientId: String, clientSecret: String) {
     private val log = LoggerFactory.getLogger(SpotifyClient::class.java)

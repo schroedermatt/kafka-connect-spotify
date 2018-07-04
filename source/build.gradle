@@ -1,8 +1,5 @@
 description = "Kafka Connect Source that reads from Spotify"
 
 dependencies {
-    compile "org.apache.kafka:connect-api:$kafka_version"
-    compile "se.michaelthelin.spotify:spotify-web-api-java:$spotify_version"
-
-    testCompile "org.spockframework:spock-core:$spock_core_version"
+    compile project(':common')
 }

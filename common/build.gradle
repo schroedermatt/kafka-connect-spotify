@@ -1,0 +1,6 @@
+description 'Common code for the spotify kafka connector and streams'
+
+dependencies {
+    compile "org.apache.kafka:connect-api:$kafka_version"
+    compile "se.michaelthelin.spotify:spotify-web-api-java:$spotify_version"
+}

@@ -2,10 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="common_main" target="1.8" />
+      <module name="common_test" target="1.8" />
       <module name="kafka-connect-spotify_main" target="1.8" />
       <module name="kafka-connect-spotify_test" target="1.8" />
       <module name="source_main" target="1.8" />
       <module name="source_test" target="1.8" />
+      <module name="stream_main" target="1.8" />
+      <module name="stream_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

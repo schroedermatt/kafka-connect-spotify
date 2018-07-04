@@ -1,4 +1,4 @@
-package com.mschroeder.kafka.connect.spotify.schema
+package com.mschroeder.kafka.common.schema
 
 import org.apache.kafka.connect.data.Schema
 import org.apache.kafka.connect.data.SchemaBuilder

@@ -1,3 +1,5 @@
 rootProject.name = 'kafka-connect-spotify'
 
+include 'common'
 include 'source'
+include 'stream'

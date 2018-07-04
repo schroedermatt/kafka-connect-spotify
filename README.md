@@ -71,6 +71,9 @@ To see if messages are flying around, exec into the broker container and use the
 ```
 > docker exec -it ${broker-container-id} bash
 > kafka-console-consumer --bootstrap-server localhost:9092 --topic spotify_play_history --from-beginning
+
+# get number of messages written to topic
+> kafka-consumer-offset-checker --topic spotify_play_history --zookeeper zookeeper:2181
 ```
 
 _You can also view the Kafka Topics UI on port `8000`_

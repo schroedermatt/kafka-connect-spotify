@@ -1,10 +1,19 @@
-package com.mschroeder.kafka.connect.spotify.schema
+package com.mschroeder.kafka.common.schema
 
 import org.apache.kafka.connect.data.Struct
 import com.wrapper.spotify.model_objects.specification.ArtistSimplified as ArtistModel
 import com.wrapper.spotify.model_objects.specification.Context as ContextModel
 import com.wrapper.spotify.model_objects.specification.PlayHistory as PlayHistoryModel
 import com.wrapper.spotify.model_objects.specification.TrackSimplified as TrackModel
+
+class StructFactory {
+    companion object {
+        fun createPlayHistoryKey(username: String, trackId: String) : Struct = Struct(PlayHistoryKey.SCHEMA)
+                .put(PlayHistoryKey.USERNAME_FIELD, username)
+                .put(PlayHistoryKey.TRACK_ID_FIELD, trackId)
+    }
+}
+
 
 /**
  * Extension methods for the Spotify Models to create a Kafka Connect Struct

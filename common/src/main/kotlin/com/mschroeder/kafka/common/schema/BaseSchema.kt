@@ -1,4 +1,4 @@
-package com.mschroeder.kafka.connect.spotify.schema
+package com.mschroeder.kafka.common.schema
 
 open class BaseSchema {
     companion object {
