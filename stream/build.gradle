@@ -1,3 +1,8 @@
+plugins {
+    // https://kotlinlang.org/docs/reference/compiler-plugins.html#kotlin-spring-compiler-plugin
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.2.51"
+}
+
 description 'streaming applications for Spotify data'
 
 repositories {
@@ -7,9 +12,20 @@ repositories {
 }
 
 dependencies {
-    compile "org.apache.kafka:kafka-streams:$kafka_version"
-    compile 'io.confluent:kafka-avro-serializer:3.3.1'
-    compile 'io.confluent:kafka-schema-registry:3.3.1'
-
     compile project(':common')
+
+    compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+    compile("org.springframework.kafka:spring-kafka:${springKafkaVersion}")
+    compile("org.apache.kafka:kafka-streams:${kafkaStreamsVersion}")
+    compile("org.apache.avro:avro:${avroVersion}")
+    compile("io.confluent:kafka-streams-avro-serde:${confluentVersion}")
+    compile("io.confluent:kafka-connect-avro-converter:${confluentVersion}")
+
+    compileOnly("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+
+    testCompile("org.apache.kafka:kafka-streams-test-utils:${kafkaStreamsTestUtilsVersion}")
+}
+
+allOpen {
+    annotation("org.springframework.context.annotation.Configuration")
 }

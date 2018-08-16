@@ -151,7 +151,26 @@ Without it the connector and its task(s) might get up and running before you hav
    2. Select 'Add New Configuration (⌘N)'
    3. Name the Configuration, Set `Host: localhost` and `Port: 5005`
    4. Save Configuration and Start Debugger
-    
+
+## KSQL
+
+To start executing KSQL on the CLI server, execute
+
+```bash
+docker-compose exec ksql-cli ksql http://ksql-server:8088
+```
+
+To view all records in a topic, SET the auto offset reset to earliest and it will start
+from the beginning. 
+
+```
+ksql> SET 'auto.offset.reset' = 'earliest';
+```
+
+```bash
+print 'spotify_play_history';
+```
+
 ### Sink Connector Idea
 
 If a song comes through more than x times, stuff it in a "favorites playlist"

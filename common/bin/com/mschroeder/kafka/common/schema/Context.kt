@@ -14,9 +14,9 @@ class Context : BaseSchema() {
                 return SchemaBuilder.struct()
                         .name(LOGICAL_NAME)
                         .version(VERSION)
-                        .field(HREF_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
-                        .field(URI_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
-                        .field(TYPE_FIELD, Schema.OPTIONAL_STRING_SCHEMA)
+                        .field(HREF_FIELD, Schema.STRING_SCHEMA)
+                        .field(URI_FIELD, Schema.STRING_SCHEMA)
+                        .field(TYPE_FIELD, Schema.STRING_SCHEMA)
                         .optional()
                         .build()
             }

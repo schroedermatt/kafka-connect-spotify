@@ -2,6 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="com.mschroeder.kafka.stream.spotify.stream_main" target="1.8" />
+      <module name="com.mschroeder.kafka.stream.spotify.stream_test" target="1.8" />
       <module name="common_main" target="1.8" />
       <module name="common_test" target="1.8" />
       <module name="kafka-connect-spotify_main" target="1.8" />
